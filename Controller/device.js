@@ -10,7 +10,11 @@ const getDeviceData = async (req, res) => {
 
   console.log(req.body);
   try {
-    const data = await Device.findById({ deviceId: deviceId });
+    // const data = await Device.
+    // get all data
+    const data = await Device.find({
+      // deviceId: deviceId,
+    });
     if (!data) {
       res.status(200).json({
         message: "No data found for this device Id",
@@ -29,6 +33,26 @@ const getDeviceData = async (req, res) => {
     });
   }
 };
+
+const getDeviceData1 = async (req, res) => {
+  console.log(req.body);
+  try {
+    // const data = await Device.
+    // get all data
+    const data = await Device.find();
+    console.log(`--------- ${data}-----------`);
+    res.status(200).json({
+      message: "Successfully retrieve data",
+      data: data,
+    });
+  } catch (error) {
+    res.status(400).json({
+      message: "Please try again",
+      error: error,
+    });
+  }
+};
+
 const allIsWell = async (req, res) => {
   const deviceId = req.body.deviceId;
   res.status(200).json({
@@ -40,11 +64,16 @@ const addDeviceData = async (req, res) => {
   //   const data = Device.findById(deviceId);
   //   console.log(req.param);
   const { deviceId, deviceName, deviceState, temp, vapourPressure } = req.body;
-  console.log(req.body);
+  // const id = req.param.id;
+  const id = req.params.id;
+  // console.log(req);
+
   try {
-    // find by id
-    const data = await Device.findById({ deviceId: deviceId });
+    const data = await Device.findById();
+
     if (data) {
+      console.log(`----------${data}`);
+
       if (data.parameters.length > 20) {
         // update last data in parameters array
         const data1 = await Device.updateOne({
@@ -66,29 +95,31 @@ const addDeviceData = async (req, res) => {
           },
         });
       }
+      
     } else {
       // create new device with new data
-
-      const device = new Device({
-        // _id: new mongoose.Types.ObjectId(),
-        deviceId: deviceId,
-        deviceName: deviceName,
-        deviceState: deviceState,
-        parameters: {
-          
-          temp: temp,
-          vapourPressure: vapourPressure,
-        },
-      });
+      console.log("inside else case");
       try {
+        const device = new Device({
+          // _id: new mongoose.Types.ObjectId(),
+          // deviceId: deviceId,
+          deviceName: deviceName,
+          deviceState: deviceState,
+          parameters: {
+            temp: temp,
+            vapourPressure: vapourPressure,
+          },
+        });
+
+        console.log(device);
         const data = await device.save();
         res.status(200).json({
           message: "Successfully save data",
           data: data,
         });
       } catch (error) {
-        res.status(200).json({
-          message: "Not able to save data",
+        res.status(400).json({
+          message: "Data does not save",
           error: error,
         });
       }
@@ -99,7 +130,6 @@ const addDeviceData = async (req, res) => {
       error: error,
     });
   }
-
 };
 
-module.exports = { getDeviceData, addDeviceData, allIsWell };
+module.exports = { getDeviceData, addDeviceData, allIsWell, getDeviceData1 };

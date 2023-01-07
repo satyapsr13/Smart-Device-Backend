@@ -3,17 +3,17 @@ const Schema = mongoose.Schema;
 
 const deviceSchema = new Schema(
   {
-    // _id: mongoose.Schema.Types.ObjectId,
+    _id: mongoose.Schema.Types.ObjectId,
     deviceName: {
       type: String,
       default: "",
     },
 
-    deviceId: {
-      type: Number,
-      required: true,
-      unique: true,
-    },
+    // deviceId: {
+    //   type: Number,
+    //   required: true,
+    //   unique: true,
+    // },
 
     deviceState: {
       type: String,
