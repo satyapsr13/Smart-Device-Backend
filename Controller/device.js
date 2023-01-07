@@ -1,10 +1,10 @@
 const Device = require("../Model/device");
 const mongoose = require("mongoose");
 const getDeviceData = async (req, res) => {
-  const deviceId = req.body.deviceId;
-  if (!deviceId) {
+  const deviceName = req.body.deviceName;
+  if (!deviceName) {
     res.status(400).json({
-      message: "Please provide device id",
+      message: "Please provide device name",
     });
   }
 
@@ -12,17 +12,16 @@ const getDeviceData = async (req, res) => {
   try {
     // const data = await Device.
     // get all data
-    const data = await Device.find({
-      // deviceId: deviceId,
+    const data = await Device.findOne({
+      deviceName: deviceName,
     });
     if (!data) {
       res.status(200).json({
-        message: "No data found for this device Id",
-        deviceId: deviceId,
+        message: `No data found for this device ${deviceName}`,
       });
     } else {
       res.status(200).json({
-        message: "Successfully send data",
+        message: "Successfully retrieve data",
         data: data,
       });
     }
@@ -69,7 +68,7 @@ const addDeviceData = async (req, res) => {
 
     if (data) {
       console.log(`-----70-----${data}`);
-      if (data.parameters.length > 20) {
+      if (data.parameters.length > 200) {
         // update last data in parameters array
         const data1 = await Device.updateOne(
           { _id: req.params.id },

@@ -7,10 +7,11 @@ const deviceSchema = new Schema(
     deviceName: {
       type: String,
       default: "",
+      unique: true,
     },
     deviceState: {
       type: String,
-      enum: ["active", "off", "running"],
+      enum: [ "off", "running"],
     },
     parameters: {
       type: [
