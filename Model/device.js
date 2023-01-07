@@ -8,20 +8,11 @@ const deviceSchema = new Schema(
       type: String,
       default: "",
     },
-
-    // deviceId: {
-    //   type: Number,
-    //   required: true,
-    //   unique: true,
-    // },
-
     deviceState: {
       type: String,
       enum: ["active", "off", "running"],
     },
-
     parameters: {
-      // list of Parameter objects
       type: [
         {
           temp: {

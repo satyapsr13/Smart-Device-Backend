@@ -21,6 +21,7 @@ const start = async () => {
     });
     console.log("connected to db");
   } catch (error) {
+    
 
     console.log(`----------------- ${error}----------------`);
     }

@@ -1,5 +1,5 @@
 const Device = require("../Model/device");
-
+const mongoose = require("mongoose");
 const getDeviceData = async (req, res) => {
   const deviceId = req.body.deviceId;
   if (!deviceId) {
@@ -53,55 +53,57 @@ const getDeviceData1 = async (req, res) => {
   }
 };
 
-const allIsWell = async (req, res) => {
-  const deviceId = req.body.deviceId;
+const allIsWell = async (_, res) => {
   res.status(200).json({
     message: " all is well",
   });
 };
 const addDeviceData = async (req, res) => {
-  //   const deviceId = req.body.deviceId;
-  //   const data = Device.findById(deviceId);
-  //   console.log(req.param);
-  const { deviceId, deviceName, deviceState, temp, vapourPressure } = req.body;
-  // const id = req.param.id;
-  const id = req.params.id;
-  // console.log(req);
+  const { deviceName, deviceState, temp, vapourPressure } = req.body;
 
   try {
-    const data = await Device.findById();
+    // const data = await Device.findById({ id: req.params.id });
+    const data = await Device.findOne({ deviceName: deviceName });
+
+    console.log(`---------68----------${data}`);
 
     if (data) {
-      console.log(`----------${data}`);
-
+      console.log(`-----70-----${data}`);
       if (data.parameters.length > 20) {
         // update last data in parameters array
-        const data1 = await Device.updateOne({
-          deviceId: deviceId,
-          $set: {
-            "parameters.$[elem].temp": temp,
-            "parameters.$[elem].vapourPressure": vapourPressure,
-          },
-        });
-      } else {
-        const data1 = await Device.updateOne({
-          // push new data to parameters array
-          deviceId: deviceId,
-          $push: {
-            parameters: {
-              temp: temp,
-              vapourPressure: vapourPressure,
+        const data1 = await Device.updateOne(
+          { _id: req.params.id },
+          {
+            $set: {
+              "parameters[19].temp": temp,
+              "parameters[19].vapourPressure": vapourPressure,
             },
-          },
+          }
+        );
+      } else {
+        const data1 = await Device.updateOne(
+          // { _id: req.params.id },
+          { deviceName: deviceName },
+          {
+            $push: {
+              parameters: {
+                temp: temp,
+                vapourPressure: vapourPressure,
+              },
+            },
+          }
+        );
+        res.status(200).json({
+          message: " successfully added",
+          data: data1,
         });
       }
-      
     } else {
       // create new device with new data
       console.log("inside else case");
       try {
         const device = new Device({
-          // _id: new mongoose.Types.ObjectId(),
+          _id: new mongoose.Types.ObjectId(),
           // deviceId: deviceId,
           deviceName: deviceName,
           deviceState: deviceState,
@@ -111,10 +113,11 @@ const addDeviceData = async (req, res) => {
           },
         });
 
-        console.log(device);
         const data = await device.save();
+
+        console.log(`----------121----${data}-------------`);
         res.status(200).json({
-          message: "Successfully save data",
+          message: "Successfully added new data",
           data: data,
         });
       } catch (error) {
@@ -126,7 +129,7 @@ const addDeviceData = async (req, res) => {
     }
   } catch (error) {
     res.status(400).json({
-      message: "Error",
+      message: "Error 138",
       error: error,
     });
   }
